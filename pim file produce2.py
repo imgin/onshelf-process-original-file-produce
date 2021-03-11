@@ -1,4 +1,15 @@
 # -*- coding: cp936 -*-
+'''
+python version:3.6
+pip3 install xlrd
+pip3 install xlwt
+pip3 install xlutils
+pip3 install openpyxl
+pip3 install requests
+pip3 install selenium
+pip3 install pymongo
+pip3 install python-dateutil
+'''
 import xlrd
 import xlwt
 from xlutils.copy import copy
@@ -94,12 +105,12 @@ def pimFileGenerate(environment,requiredNum,time_stamp,spuCodes,huohao):
                 currColumn = currColumn + 1
 
 
-            resultPath = str(path) +'\\' + time_stamp + '有' + str(requiredNum) + '条'
+            resultPath = str(path) +'/' + time_stamp + '有' + str(requiredNum) + '条'
             if os.path.exists(resultPath):
                 print('已存在文件夹'+resultPath +'，请删除或一分钟后重试')
             else:
                 os.mkdir(resultPath)
-            data.save(resultPath + '\pim源数据'+ str(requiredNum) + '条于'+time_stamp+'完成.xlsx')
+            data.save(resultPath + '/pim源数据'+ str(requiredNum) + '条于'+time_stamp+'完成.xlsx')
             return(createPlanExcel(spuCodes,environment,time_stamp,resultPath))
 
 def createPlanExcel(spuCodes,environment,time_stamp,resultPath):
@@ -129,7 +140,7 @@ def createPlanExcel(spuCodes,environment,time_stamp,resultPath):
                 table.cell(num*3+4,3).value = datetime.datetime.strptime('2020-2-25','%Y-%m-%d')
                 table.cell(num*3+4,4).value = datetime.datetime.strptime('2020-3-28','%Y-%m-%d')
                 num = num + 1
-            data.save(resultPath+ '\WLQTESTHH001-1 - ' +environment + str(len(spuCodes)) + '条于'+time_stamp+'完成.xlsx')
+            data.save(resultPath+ '/WLQTESTHH001-1 - ' +environment + str(len(spuCodes)) + '条于'+time_stamp+'完成.xlsx')
     return('WLQTESTHH001-1 - ' +environment + str(len(spuCodes)) + '条于'+time_stamp+'完成.xlsx')
 #上传计划模板
 def createSchedule(url,environment,token,shopcode,time_stamp,planFileName,requiredNum):
@@ -139,9 +150,9 @@ def createSchedule(url,environment,token,shopcode,time_stamp,planFileName,requir
        # print(content)
         content = ''.join(str(content)) #此段代码与content = open("WLQTESTHH001-1.xlsx", 'rb').read()功能相同'''
     path=Path.cwd()
-    resultPath = str(path) + '\\' + time_stamp + '有' + str(requiredNum) + '条'
+    resultPath = str(path) + '/' + time_stamp + '有' + str(requiredNum) + '条'
     files = OrderedDict([("name", (None, "pythonPlan"+"{0:%Y-%m-%d-%H-%M}".format(datetime.datetime.now()),'')),("type", (None, "NEW",'')),("platformCode", (None, "TMALL",''))\
-                            ,("file", (planFileName, open(resultPath +'\\'+ planFileName, 'rb').read(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) \
+                            ,("file", (planFileName, open(resultPath +'/'+ planFileName, 'rb').read(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) \
                             #,("file", ('WLQTESTHH001-1.xls', content,'application/vnd.ms-excel'))  \
                          #,file
                          ])
@@ -169,7 +180,7 @@ def createSchedule(url,environment,token,shopcode,time_stamp,planFileName,requir
 
 '''https://pim-sit.baozun.com/pm/job/raw-data-row/importList/v2
 '''
-def getToken(env,psd):
+def getToken(env, psd):
     header = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-Requested-With': 'XMLHttpRequest'
@@ -450,7 +461,7 @@ def pdpWenAn(huohao,environment):
                 currColumn = currColumn + 1
             if huohaoCount == 1 :
                 time_stamp = '{0:%Y-%m-%d-%H-%M}'.format(datetime.datetime.now())
-                data.save(str(path) +'\详情页'+huohao+'时间'+str(time.time())+'.xlsx')
+                data.save(str(path) +'/详情页'+huohao+'时间'+str(time.time())+'.xlsx')
             else:
                 print('没找到对应货号字段')
             
@@ -489,7 +500,7 @@ def bitianshuxing(huohao,environment):
                 currColumn = currColumn + 1
             if huohaoCount == 1 :
                 time_stamp = '{0:%Y-%m-%d-%H-%M}'.format(datetime.datetime.now())
-                data.save(str(path) +'\必填属性'+huohao+'时间'+str(time.time())+'.xlsx')
+                data.save(str(path) +'/必填属性'+huohao+'时间'+str(time.time())+'.xlsx')
             else:
                 print('没找到对应货号字段')
     if modelCount>1:
@@ -499,17 +510,17 @@ def bitianshuxing(huohao,environment):
 
 def imageProcess(path,time_stamp,spuCodes):
     requireNum = len(spuCodes)
-    resultPath = str(path) + '\\' + time_stamp + '有' + str(requireNum) + '条\\原图' + str(requireNum) + '条'
-    sampleDir = str(path) + '\\原图sample'
+    resultPath = str(path) + '/' + time_stamp + '有' + str(requireNum) + '条/原图' + str(requireNum) + '条'
+    sampleDir = str(path) + '/原图sample'
     originImageFoloders = []
     if os.path.exists(sampleDir):
         num = 0
         while num < len(spuCodes):
-            spuOriginImageFolder = resultPath + '\\' + str(spuCodes[num])
+            spuOriginImageFolder = resultPath + '/' + str(spuCodes[num])
             shutil.copytree(sampleDir,spuOriginImageFolder)
             num = num + 1
             originImageFoloders.append(spuOriginImageFolder)
-        zipPath = str(path) + '\\' + time_stamp + '有' + str(requireNum) + '条\\' + str(requireNum) + '条原图.zip'
+        zipPath = str(path) + '/' + time_stamp + '有' + str(requireNum) + '条/' + str(requireNum) + '条原图.zip'
         get_zip(originImageFoloders,zipPath,resultPath)#resultPath用于删除压缩文件多余层级
     else:
         print('原图sample文件夹不存在，即将退出')
@@ -518,12 +529,12 @@ def imageProcess(path,time_stamp,spuCodes):
 def get_zip(files,zip_name,resultPath):
     zp=zipfile.ZipFile(zip_name,'w', zipfile.ZIP_DEFLATED)
     for file in files:
-        fil = file.split('\\')
+        fil = file.split('/')
         filename = fil[len(fil)-1]
         for i in os.walk(file):
             for n in i[2]:
-                route = ''.join((i[0],'\\',n))
-                zp.write(route,route.replace(resultPath+'\\',''))
+                route = ''.join((i[0],'/',n))
+                zp.write(route,route.replace(resultPath+'/',''))
 
     zp.close()
     print('压缩完成')
@@ -537,11 +548,11 @@ def spuGenerate(requiredNum):
         a = a + 1
     return spuCodes, huohao
 
-uploadYN=True
+uploadYN = False
 environment = 'uat'
 spuCount = 1
-password='3RWnuOGFUdlzgC8HdFtSVg=='
-nocc='false'
+password = '3RWnuOGFUdlzgC8HdFtSVg=='
+nocc = 'false'
 
 path = Path.cwd()
 excels = path.glob('*.xls*')
@@ -549,9 +560,10 @@ excels = path.glob('*.xls*')
 spuCodes, huohao=spuGenerate(spuCount)
 time_stamp = '{0:%Y%m%d%H%M}'.format(datetime.datetime.now())
 planFileName = pimFileGenerate(environment,spuCount,time_stamp,spuCodes,huohao)
-token = getToken(environment,password)
-if uploadYN==True:
-    if environment=='sit':
+originImageFolders = imageProcess(path,time_stamp,spuCodes)
+if uploadYN:
+    token = getToken(environment,password)
+    if environment == 'sit':
         planUrl = 'https://ross-workbench-sit.baozun.com'
     elif environment == 'uat':
         planUrl = 'https://ross-workbench-uat.baozun.com'
@@ -560,7 +572,6 @@ if uploadYN==True:
         exit()
     shopcode = 'abercrombiefitch'
     createSchedule(planUrl,environment,token,shopcode,time_stamp,planFileName,spuCount)
-    originImageFolders = imageProcess(path,time_stamp,spuCodes)
 '''for excel in excels:
     filename = str(excel.name)
     if "SIT data" in filename and "~$SIT data" not in filename:
